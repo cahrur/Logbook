@@ -17,6 +17,7 @@ import { ModuleAboutModal } from '@/components/ModuleAboutModal';
 import { RoadmapSection } from '@/components/RoadmapSection';
 import { TasksSection } from '@/components/TasksSection';
 import { FilesSection } from '@/components/FilesSection';
+import { InfoSection } from '@/components/InfoSection';
 import { apiErrorMessage } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { overdueDays } from '@/lib/schedule';
@@ -123,6 +124,8 @@ export default function ModuleDetailPage() {
       <TasksSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
 
       <FilesSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
+
+      <InfoSection moduleId={moduleId} />
 
       <ActivityDetailModal
         open={!!viewingActivity}
