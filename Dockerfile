@@ -8,7 +8,8 @@ ENV NODE_ENV=development
 WORKDIR /app/frontend
 # Copy manifests first for better layer caching.
 COPY frontend/package*.json ./
-RUN npm ci --include=dev
+# Cache npm downloads across builds so packages aren't re-fetched every time.
+RUN --mount=type=cache,target=/root/.npm npm ci --include=dev
 COPY frontend/ ./
 RUN npm run build
 
@@ -19,7 +20,7 @@ ENV NODE_ENV=production
 
 # Install production dependencies only (cached unless package files change).
 COPY backend/package*.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 # Application source.
 COPY backend/ ./
