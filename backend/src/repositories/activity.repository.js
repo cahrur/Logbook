@@ -27,11 +27,12 @@ function baseQuery() {
 }
 
 module.exports = {
-  // Filters: { moduleId, category, createdBy, dateFrom, dateTo, limit }
+  // Filters: { moduleId, category, directiveType, createdBy, dateFrom, dateTo, limit }
   list(filters = {}) {
     const q = baseQuery();
     if (filters.moduleId) q.where('a.module_id', filters.moduleId);
     if (filters.category) q.where('a.category', filters.category);
+    if (filters.directiveType) q.where('a.directive_type', filters.directiveType);
     if (filters.createdBy) q.where('a.created_by', filters.createdBy);
     if (filters.dateFrom) q.where('a.activity_date', '>=', filters.dateFrom);
     if (filters.dateTo) q.where('a.activity_date', '<=', filters.dateTo);

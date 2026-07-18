@@ -17,6 +17,7 @@ const CAT = {
 };
 
 const CATEGORY_OPTIONS = Object.entries(ACTIVITY_CATEGORY).map(([value, v]) => ({ value, label: v.label }));
+const DIRECTIVE_OPTIONS = Object.entries(DIRECTIVE_TYPE).map(([value, v]) => ({ value, label: v.label }));
 const TASK_OPTIONS = [
   { value: 'task', label: 'Semua tugas (deadline)' },
   { value: 'todo', label: 'Tugas belum selesai' },
@@ -147,18 +148,20 @@ export function ActivityTimeline({ moduleId, onView, onEdit, onDelete }) {
   const { data: activities, isLoading } = useActivities({ module_id: moduleId });
   const [activeMonth, setActiveMonth] = useState(null);
   const [catFilter, setCatFilter] = useState('');
+  const [directiveFilter, setDirectiveFilter] = useState('');
   const [taskFilter, setTaskFilter] = useState('');
   const scrollerRef = useRef(null);
 
-  // Apply category / task filters client-side (all module activities are already loaded).
+  // Apply category / directive / task filters client-side (all module activities are already loaded).
   const filtered = useMemo(() => {
     let list = activities || [];
     if (catFilter) list = list.filter((a) => a.category === catFilter);
+    if (directiveFilter) list = list.filter((a) => a.directive_type === directiveFilter);
     if (taskFilter === 'task') list = list.filter((a) => a.due_date);
     else if (taskFilter === 'todo') list = list.filter((a) => a.due_date && !a.completed_at);
     else if (taskFilter === 'done') list = list.filter((a) => a.due_date && a.completed_at);
     return list;
-  }, [activities, catFilter, taskFilter]);
+  }, [activities, catFilter, directiveFilter, taskFilter]);
 
   // Group filtered activities by month, then by day.
   const byMonth = useMemo(() => {
@@ -214,9 +217,10 @@ export function ActivityTimeline({ moduleId, onView, onEdit, onDelete }) {
 
   return (
     <div>
-      {/* Category + task filters */}
-      <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:max-w-md">
+      {/* Category + directive + task filters */}
+      <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3 lg:max-w-2xl">
         <Select placeholder="Semua kategori" options={CATEGORY_OPTIONS} value={catFilter} onChange={(e) => setCatFilter(e.target.value)} />
+        <Select placeholder="Semua arahan/keputusan" options={DIRECTIVE_OPTIONS} value={directiveFilter} onChange={(e) => setDirectiveFilter(e.target.value)} />
         <Select placeholder="Semua aktivitas" options={TASK_OPTIONS} value={taskFilter} onChange={(e) => setTaskFilter(e.target.value)} />
       </div>
 

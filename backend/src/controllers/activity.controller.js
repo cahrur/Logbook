@@ -7,6 +7,7 @@ module.exports = {
     const filters = {
       moduleId: q.module_id,
       category: q.category,
+      directiveType: q.directive_type,
       createdBy: q.created_by,
       dateFrom: q.date_from,
       dateTo: q.date_to,

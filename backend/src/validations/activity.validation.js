@@ -27,6 +27,7 @@ const updateActivitySchema = createActivitySchema.partial().refine(
 const listActivityQuerySchema = z.object({
   module_id: z.coerce.number().int().positive().optional(),
   category: z.enum(CATEGORY).optional(),
+  directive_type: z.enum(DIRECTIVE_TYPE).optional(),
   created_by: z.coerce.number().int().positive().optional(),
   date_from: dateString.optional(),
   date_to: dateString.optional(),

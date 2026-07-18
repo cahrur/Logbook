@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { PageHeader, CenteredSpinner, ErrorState, EmptyState } from '@/components/ui/Misc';
 import { Select } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
-import { ACTIVITY_CATEGORY } from '@/components/ui/Badge';
+import { ACTIVITY_CATEGORY, DIRECTIVE_TYPE } from '@/components/ui/Badge';
 import { ActivityItem } from '@/components/ActivityItem';
 import { ActivityFormModal } from '@/components/ActivityFormModal';
 import { ActivityDetailModal } from '@/components/ActivityDetailModal';
@@ -14,6 +14,7 @@ import { apiErrorMessage } from '@/lib/api';
 import { formatDate, ymd } from '@/lib/format';
 
 const CATEGORY_OPTIONS = Object.entries(ACTIVITY_CATEGORY).map(([value, v]) => ({ value, label: v.label }));
+const DIRECTIVE_OPTIONS = Object.entries(DIRECTIVE_TYPE).map(([value, v]) => ({ value, label: v.label }));
 
 const TASK_OPTIONS = [
   { value: 'task', label: 'Semua tugas (ada deadline)' },
@@ -35,7 +36,7 @@ function groupByDate(activities) {
 export default function ActivitiesPage() {
   const { canWrite, canDelete } = useAuth();
   const { data: modules } = useModules();
-  const [filters, setFilters] = useState({ module_id: '', category: '', task: '' });
+  const [filters, setFilters] = useState({ module_id: '', category: '', directive_type: '', task: '' });
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -52,6 +53,7 @@ export default function ActivitiesPage() {
     () => ({
       module_id: filters.module_id ? Number(filters.module_id) : undefined,
       category: filters.category || undefined,
+      directive_type: filters.directive_type || undefined,
       search: debouncedSearch || undefined,
       is_task: filters.task === 'task' ? 'true' : undefined,
       task_status: filters.task === 'todo' || filters.task === 'done' ? filters.task : undefined,
@@ -115,7 +117,7 @@ export default function ActivitiesPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Select
           placeholder="Semua modul"
           options={moduleOptions}
@@ -127,6 +129,12 @@ export default function ActivitiesPage() {
           options={CATEGORY_OPTIONS}
           value={filters.category}
           onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
+        />
+        <Select
+          placeholder="Semua arahan/keputusan"
+          options={DIRECTIVE_OPTIONS}
+          value={filters.directive_type}
+          onChange={(e) => setFilters((f) => ({ ...f, directive_type: e.target.value }))}
         />
         <Select
           placeholder="Semua aktivitas"
