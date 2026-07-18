@@ -46,6 +46,23 @@ export const ROLE_BADGE = {
   viewer: { label: 'Viewer', tone: 'neutral' },
 };
 
+// Issue (bug report) priority + status.
+export const ISSUE_PRIORITY = {
+  low: { label: 'Low', tone: 'neutral' },
+  medium: { label: 'Medium', tone: 'info' },
+  high: { label: 'High', tone: 'warn' },
+  critical: { label: 'Critical', tone: 'bad' },
+};
+export const ISSUE_PRIORITY_ORDER = ['low', 'medium', 'high', 'critical'];
+
+export const ISSUE_STATUS = {
+  open: { label: 'Open', tone: 'warn' },
+  in_progress: { label: 'In Progress', tone: 'info' },
+  resolved: { label: 'Resolved', tone: 'good' },
+  closed: { label: 'Closed', tone: 'neutral' },
+};
+export const ISSUE_STATUS_ORDER = ['open', 'in_progress', 'resolved', 'closed'];
+
 // Task workflow status.
 export const TASK_STATUS = {
   todo: { label: 'Akan Dikerjakan', tone: 'neutral' },

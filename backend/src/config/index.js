@@ -37,6 +37,7 @@ const config = {
   upload: {
     dir: process.env.UPLOAD_DIR || path.resolve(__dirname, '../../uploads'),
     maxSizeBytes: (parseInt(process.env.MAX_UPLOAD_SIZE_MB, 10) || 10) * 1024 * 1024,
+    maxImageSizeBytes: (parseInt(process.env.MAX_IMAGE_SIZE_MB, 10) || 2) * 1024 * 1024,
   },
 
   turnstile: {

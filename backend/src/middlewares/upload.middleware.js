@@ -46,4 +46,46 @@ function uploadPdf(req, res, next) {
   });
 }
 
-module.exports = { uploadPdf };
+// ----- Image uploads (issue screenshots) -----
+const IMAGE_EXT = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+};
+
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, config.upload.dir),
+  filename: (req, file, cb) => cb(null, `${crypto.randomUUID()}${IMAGE_EXT[file.mimetype] || '.img'}`),
+});
+
+function imageFilter(req, file, cb) {
+  if (!IMAGE_EXT[file.mimetype]) {
+    return cb(new ValidationError('Hanya gambar JPG, PNG, GIF, atau WEBP yang diperbolehkan'));
+  }
+  return cb(null, true);
+}
+
+const imageUpload = multer({
+  storage: imageStorage,
+  fileFilter: imageFilter,
+  limits: { fileSize: config.upload.maxImageSizeBytes, files: 1 },
+});
+
+function uploadImage(req, res, next) {
+  imageUpload.single('image')(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        const message =
+          err.code === 'LIMIT_FILE_SIZE'
+            ? 'Ukuran gambar melebihi 2MB'
+            : 'Upload gagal';
+        return next(new ValidationError(message));
+      }
+      return next(err);
+    }
+    return next();
+  });
+}
+
+module.exports = { uploadPdf, uploadImage };

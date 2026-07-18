@@ -6,6 +6,8 @@ router.use('/roadmap', require('./roadmap.routes'));
 router.use('/files', require('./file.routes'));
 router.use('/infos', require('./moduleInfo.routes'));
 router.use('/tasks', require('./task.routes'));
+router.use('/issues', require('./issue.routes'));
+router.use('/issue-images', require('./issueImage.routes'));
 router.use('/activities', require('./activity.routes'));
 router.use('/dashboard', require('./dashboard.routes'));
 

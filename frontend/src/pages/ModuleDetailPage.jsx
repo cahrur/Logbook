@@ -16,8 +16,10 @@ import { ModuleFormModal } from '@/components/ModuleFormModal';
 import { ModuleAboutModal } from '@/components/ModuleAboutModal';
 import { RoadmapSection } from '@/components/RoadmapSection';
 import { TasksSection } from '@/components/TasksSection';
+import { IssueSection } from '@/components/IssueSection';
 import { FilesSection } from '@/components/FilesSection';
 import { InfoSection } from '@/components/InfoSection';
+import { ModuleRecap } from '@/components/ModuleRecap';
 import { apiErrorMessage } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { overdueDays } from '@/lib/schedule';
@@ -108,6 +110,10 @@ export default function ModuleDetailPage() {
       </Card>
 
       <div className="mt-8">
+        <ModuleRecap moduleId={moduleId} />
+      </div>
+
+      <div className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-slate-800 dark:text-slate-100">
           Aktivitas Modul {activities ? `(${activities.length})` : ''}
         </h2>
@@ -122,6 +128,8 @@ export default function ModuleDetailPage() {
       <RoadmapSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
 
       <TasksSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
+
+      <IssueSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
 
       <FilesSection moduleId={moduleId} canWrite={canWrite} canDelete={canDelete} />
 
