@@ -39,6 +39,13 @@ const config = {
     maxSizeBytes: (parseInt(process.env.MAX_UPLOAD_SIZE_MB, 10) || 10) * 1024 * 1024,
   },
 
+  turnstile: {
+    // Empty secret → verification is skipped (local dev). Set both in production.
+    secretKey: process.env.TURNSTILE_SECRET_KEY || '',
+    expectedHostname: process.env.TURNSTILE_EXPECTED_HOSTNAME || '',
+    verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+  },
+
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000,
     max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,

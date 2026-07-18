@@ -4,6 +4,7 @@ import { NotebookPen } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/Field';
+import Turnstile from '@/components/ui/Turnstile';
 import { apiErrorMessage } from '@/lib/api';
 
 export default function LoginPage() {
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState(null);
 
   const from = location.state?.from?.pathname || '/';
 
@@ -23,13 +25,19 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      setError('Selesaikan verifikasi keamanan dulu.');
+      return;
+    }
     setError('');
     setSubmitting(true);
     try {
-      await login(email, password);
+      await login(email, password, turnstileToken);
       navigate(from, { replace: true });
     } catch (err) {
       setError(apiErrorMessage(err, 'Login gagal'));
+      // Token is single-use — force a fresh challenge on retry.
+      setTurnstileToken(null);
     } finally {
       setSubmitting(false);
     }
@@ -71,13 +79,20 @@ export default function LoginPage() {
             required
           />
 
+          <Turnstile
+            action="login"
+            onVerify={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+          />
+
           {error && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-300" role="alert">
               {error}
             </p>
           )}
 
-          <Button type="submit" size="lg" loading={submitting} className="w-full">
+          <Button type="submit" size="lg" loading={submitting} disabled={!turnstileToken} className="w-full">
             Masuk
           </Button>
         </form>
