@@ -12,12 +12,11 @@ export default function Turnstile({ onVerify, onError, onExpire, action = 'login
   cbRef.current = { onVerify, onError, onExpire };
 
   useEffect(() => {
-    const render = () => {
-      if (!window.turnstile || !containerRef.current) return;
-      if (widgetIdRef.current !== null) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = null;
-      }
+    let cancelled = false;
+    let timer;
+
+    const renderWidget = () => {
+      if (cancelled || !containerRef.current || widgetIdRef.current !== null) return;
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_KEY,
         action,
@@ -30,10 +29,17 @@ export default function Turnstile({ onVerify, onError, onExpire, action = 'login
       });
     };
 
-    if (window.turnstile) render();
-    else window.onTurnstileLoad = render;
+    // Poll until the Turnstile script has loaded — robust to load order.
+    const waitForScript = () => {
+      if (cancelled) return;
+      if (window.turnstile?.render) renderWidget();
+      else timer = setTimeout(waitForScript, 150);
+    };
+    waitForScript();
 
     return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
       if (widgetIdRef.current !== null && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = null;

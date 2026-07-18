@@ -22,12 +22,20 @@ app.use(
         baseUri: ["'self'"],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
-        // Cloudflare Turnstile: script, iframe widget, and verification calls.
-        scriptSrc: ["'self'", 'https://challenges.cloudflare.com'],
+        // Cloudflare Turnstile (widget) + Cloudflare Web Analytics beacon.
+        scriptSrc: [
+          "'self'",
+          'https://challenges.cloudflare.com',
+          'https://static.cloudflareinsights.com',
+        ],
         frameSrc: ["'self'", 'https://challenges.cloudflare.com'],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://challenges.cloudflare.com'],
+        connectSrc: [
+          "'self'",
+          'https://challenges.cloudflare.com',
+          'https://cloudflareinsights.com',
+        ],
         formAction: ["'self'"],
         upgradeInsecureRequests: config.env === 'production' ? [] : null,
       },
