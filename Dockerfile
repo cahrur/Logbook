@@ -5,6 +5,10 @@ FROM node:20-alpine AS frontend
 # Force a dev install so build tools (vite) are present even when the platform
 # injects NODE_ENV=production at build time (e.g. Coolify).
 ENV NODE_ENV=development
+# Public build-time config baked into the SPA bundle. In Coolify, set this as a
+# BUILD-TIME variable with your real Cloudflare site key (empty → testing key).
+ARG VITE_TURNSTILE_SITE_KEY
+ENV VITE_TURNSTILE_SITE_KEY=${VITE_TURNSTILE_SITE_KEY}
 WORKDIR /app/frontend
 # Copy manifests first for better layer caching.
 COPY frontend/package*.json ./
