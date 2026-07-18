@@ -1,0 +1,12 @@
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/dist
+backend/public
+backend/uploads
+**/*.log
+.git
+.gitignore
+README.md
+*.md

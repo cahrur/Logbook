@@ -1,0 +1,38 @@
+# === SECRETS & CONFIG ===
+.env
+.env.*
+!.env.example
+
+# === AI AGENT SKILLS ===
+skills/
+
+# === DEPENDENCIES ===
+node_modules/
+
+# === BUILD OUTPUT ===
+dist/
+build/
+backend/public/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# === LOGS & TEMP ===
+*.log
+npm-debug.log*
+coverage/
+tmp/
+
+# === DATABASE ===
+*.sqlite
+*.sqlite3
+*.db
+
+# === UPLOADS (user files) ===
+uploads/
+backend/uploads/
