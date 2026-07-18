@@ -3,30 +3,17 @@ const path = require('path');
 const config = require('../config');
 const fileRepo = require('../repositories/file.repository');
 const moduleRepo = require('../repositories/module.repository');
-const { NotFoundError, ValidationError } = require('../utils/errors');
+const { NotFoundError } = require('../utils/errors');
+const { assertDocumentContent, extFor } = require('../utils/fileTypes');
 
 function safePath(storedName) {
-  // stored_name is a generated UUID.pdf, but guard against traversal anyway.
+  // stored_name is a generated UUID.ext, but guard against traversal anyway.
   return path.join(config.upload.dir, path.basename(storedName));
 }
 
 function removeFromDisk(storedName) {
   const filePath = safePath(storedName);
   fs.promises.unlink(filePath).catch(() => {});
-}
-
-// Verify the saved file really starts with the PDF magic bytes (%PDF-).
-function assertPdfMagic(filePath) {
-  const fd = fs.openSync(filePath, 'r');
-  try {
-    const buf = Buffer.alloc(5);
-    fs.readSync(fd, buf, 0, 5, 0);
-    if (buf.toString('latin1') !== '%PDF-') {
-      throw new ValidationError('Isi file bukan PDF yang valid');
-    }
-  } finally {
-    fs.closeSync(fd);
-  }
 }
 
 const fileService = {
@@ -52,8 +39,9 @@ const fileService = {
     }
 
     // Content sniffing (defense-in-depth beyond extension + MIME).
+    // Validate against the stored (whitelisted) extension, not the client name.
     try {
-      assertPdfMagic(safePath(file.filename));
+      assertDocumentContent(safePath(file.filename), extFor(file.filename));
     } catch (err) {
       removeFromDisk(file.filename);
       throw err;

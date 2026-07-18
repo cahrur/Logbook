@@ -16,7 +16,7 @@ export const fileService = {
   async remove(id) {
     await api.delete(`/files/${id}`);
   },
-  // Fetches the PDF as a blob (with auth) so it can be opened in a new tab.
+  // Fetches the file as a blob (with auth) so it can be opened or downloaded.
   async fetchBlob(id) {
     const res = await api.get(`/files/${id}`, { responseType: 'blob' });
     return res.data;

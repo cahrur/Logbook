@@ -76,40 +76,40 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-5">
-        {/* Modules */}
+        {/* My latest tasks */}
         <section className="lg:col-span-3">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Progres Modul</h2>
-            <Link to="/modules" className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-100">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Tugas Terbaru</h2>
+            <Link to="/tasks" className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-100">
               Lihat semua
             </Link>
           </div>
-          {modules.length === 0 ? (
-            <EmptyState title="Belum ada modul" description="Tambahkan modul pertama di halaman Modul." />
+          {myTasks.length === 0 ? (
+            <EmptyState title="Belum ada tugas untukmu" />
           ) : (
-            <div className="space-y-2.5">
-              {modules.slice(0, 5).map((m) => {
-                const st = MODULE_STATUS[m.status] || MODULE_STATUS.planned;
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {myTasks.slice(0, 5).map((t) => {
+                const st = TASK_STATUS[t.status] || TASK_STATUS.todo;
+                const done = t.status === 'done';
                 return (
-                  <Link key={m.id} to={`/modules/${m.id}`}>
-                    <Card className="p-3.5 transition-colors hover:border-brand-300 dark:hover:border-brand-700">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-medium text-slate-800 dark:text-slate-100">{m.name}</p>
-                          <p className="text-xs text-slate-400">
-                            {m.pic_name ? `PIC: ${m.pic_name}` : 'PIC belum ditentukan'} · {m.activity_count} aktivitas
-                          </p>
-                        </div>
-                        <Badge tone={st.tone}>{st.label}</Badge>
-                      </div>
-                      <div className="mt-2.5 flex items-center gap-3">
-                        <ProgressBar value={m.progress} amber={m.status === 'on_hold'} />
-                        <span className="w-10 text-right text-xs font-medium tabular-nums text-slate-500 dark:text-slate-400">
-                          {m.progress}%
-                        </span>
-                      </div>
-                    </Card>
-                  </Link>
+                  <Card key={t.id} className="p-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={cn('truncate font-medium', done ? 'text-slate-400 line-through dark:text-slate-500' : 'text-slate-800 dark:text-slate-100')}>
+                        {t.title}
+                      </p>
+                      <Badge tone={st.tone}>{st.label}</Badge>
+                    </div>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-400">
+                      {t.module_name}
+                      {t.deadline && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <CalendarDays className="h-3 w-3" />
+                          {formatDate(t.deadline)}
+                        </>
+                      )}
+                    </p>
+                  </Card>
                 );
               })}
             </div>
@@ -136,40 +136,40 @@ export default function DashboardPage() {
         </section>
       </div>
 
-      {/* My latest tasks */}
+      {/* Modules */}
       <section className="mt-8">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Tugas Terbaru</h2>
-          <Link to="/tasks" className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-100">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Progres Modul</h2>
+          <Link to="/modules" className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-100">
             Lihat semua
           </Link>
         </div>
-        {myTasks.length === 0 ? (
-          <EmptyState title="Belum ada tugas untukmu" />
+        {modules.length === 0 ? (
+          <EmptyState title="Belum ada modul" description="Tambahkan modul pertama di halaman Modul." />
         ) : (
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {myTasks.slice(0, 5).map((t) => {
-              const st = TASK_STATUS[t.status] || TASK_STATUS.todo;
-              const done = t.status === 'done';
+            {modules.slice(0, 5).map((m) => {
+              const st = MODULE_STATUS[m.status] || MODULE_STATUS.planned;
               return (
-                <Card key={t.id} className="p-3.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className={cn('truncate font-medium', done ? 'text-slate-400 line-through dark:text-slate-500' : 'text-slate-800 dark:text-slate-100')}>
-                      {t.title}
-                    </p>
-                    <Badge tone={st.tone}>{st.label}</Badge>
-                  </div>
-                  <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-400">
-                    {t.module_name}
-                    {t.deadline && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <CalendarDays className="h-3 w-3" />
-                        {formatDate(t.deadline)}
-                      </>
-                    )}
-                  </p>
-                </Card>
+                <Link key={m.id} to={`/modules/${m.id}`}>
+                  <Card className="p-3.5 transition-colors hover:border-brand-300 dark:hover:border-brand-700">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-slate-800 dark:text-slate-100">{m.name}</p>
+                        <p className="text-xs text-slate-400">
+                          {m.pic_name ? `PIC: ${m.pic_name}` : 'PIC belum ditentukan'} · {m.activity_count} aktivitas
+                        </p>
+                      </div>
+                      <Badge tone={st.tone}>{st.label}</Badge>
+                    </div>
+                    <div className="mt-2.5 flex items-center gap-3">
+                      <ProgressBar value={m.progress} amber={m.status === 'on_hold'} />
+                      <span className="w-10 text-right text-xs font-medium tabular-nums text-slate-500 dark:text-slate-400">
+                        {m.progress}%
+                      </span>
+                    </div>
+                  </Card>
+                </Link>
               );
             })}
           </div>

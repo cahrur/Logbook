@@ -2,6 +2,7 @@ const fs = require('fs');
 const fileService = require('../services/file.service');
 const { ok, created, asyncHandler } = require('../utils/response');
 const { ValidationError, NotFoundError } = require('../utils/errors');
+const { isPreviewable } = require('../utils/fileTypes');
 
 module.exports = {
   list: asyncHandler(async (req, res) => {
@@ -10,7 +11,7 @@ module.exports = {
   }),
 
   upload: asyncHandler(async (req, res) => {
-    if (!req.file) throw new ValidationError('File PDF wajib diunggah');
+    if (!req.file) throw new ValidationError('Berkas wajib diunggah');
     const moduleId = Number(req.body.module_id);
     if (!Number.isInteger(moduleId) || moduleId <= 0) {
       // Clean up the orphaned upload before rejecting.
@@ -25,17 +26,21 @@ module.exports = {
     return created(res, data, 'Berkas berhasil diunggah');
   }),
 
-  // Streams the PDF inline for preview. Auth is enforced by the route.
+  // Streams the file for preview/download. Auth is enforced by the route.
   raw: asyncHandler(async (req, res) => {
     const file = await fileService.getById(req.params.id);
     const filePath = fileService.filePathFor(file);
     if (!fs.existsSync(filePath)) {
       throw new NotFoundError('Berkas tidak ada di server');
     }
-    res.setHeader('Content-Type', 'application/pdf');
+    // Preview raster/PDF inline; force download for the rest (and never let the
+    // browser sniff the type — e.g. an SVG must not run as an active document).
+    const disposition = isPreviewable(file.mime_type) ? 'inline' : 'attachment';
+    res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader(
       'Content-Disposition',
-      `inline; filename="${encodeURIComponent(file.original_name)}"`
+      `${disposition}; filename="${encodeURIComponent(file.original_name)}"`
     );
     return res.sendFile(filePath);
   }),

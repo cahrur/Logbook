@@ -1,24 +1,36 @@
 const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 const config = require('../config');
 const { ValidationError } = require('../utils/errors');
+const { findTypeByExt, mimeAllowed, extFor } = require('../utils/fileTypes');
 
 // Ensure the upload directory exists.
 fs.mkdirSync(config.upload.dir, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, config.upload.dir),
-  // Always store under a random name with a .pdf extension (no user-supplied path).
-  filename: (req, file, cb) => cb(null, `${crypto.randomUUID()}.pdf`),
+  // Store under a random name, preserving only the whitelisted extension
+  // (no user-supplied path or filename ever touches the disk).
+  filename: (req, file, cb) => {
+    const ext = extFor(file.originalname);
+    const safeExt = findTypeByExt(ext) ? ext : '.bin';
+    cb(null, `${crypto.randomUUID()}${safeExt}`);
+  },
 });
 
+// Gate on extension (strong whitelist) + MIME (advisory). Content is verified
+// by magic bytes after the write, in the service layer.
 function fileFilter(req, file, cb) {
-  const extOk = path.extname(file.originalname).toLowerCase() === '.pdf';
-  const mimeOk = file.mimetype === 'application/pdf';
-  if (!extOk || !mimeOk) {
-    return cb(new ValidationError('Hanya file PDF yang diperbolehkan'));
+  const ext = extFor(file.originalname);
+  const type = findTypeByExt(ext);
+  if (!type) {
+    return cb(
+      new ValidationError('Tipe berkas tidak didukung (PDF, Excel, Word, PNG, JPG, WEBP, SVG, AI)')
+    );
+  }
+  if (!mimeAllowed(type, file.mimetype)) {
+    return cb(new ValidationError('Tipe MIME berkas tidak sesuai dengan ekstensinya'));
   }
   return cb(null, true);
 }
@@ -30,7 +42,7 @@ const upload = multer({
 });
 
 // Wrap multer so its errors become proper 400 responses.
-function uploadPdf(req, res, next) {
+function uploadDocument(req, res, next) {
   upload.single('file')(req, res, (err) => {
     if (err) {
       if (err instanceof multer.MulterError) {
@@ -88,4 +100,4 @@ function uploadImage(req, res, next) {
   });
 }
 
-module.exports = { uploadPdf, uploadImage };
+module.exports = { uploadDocument, uploadImage };
