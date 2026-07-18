@@ -2,10 +2,13 @@
 
 # ---- Stage 1: build the frontend (Vite) ----
 FROM node:20-alpine AS frontend
+# Force a dev install so build tools (vite) are present even when the platform
+# injects NODE_ENV=production at build time (e.g. Coolify).
+ENV NODE_ENV=development
 WORKDIR /app/frontend
 # Copy manifests first for better layer caching.
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --include=dev
 COPY frontend/ ./
 RUN npm run build
 
