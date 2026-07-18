@@ -7,6 +7,16 @@ import { Button } from '@/components/ui/Button';
 import { InfoFormModal } from '@/components/InfoFormModal';
 import { apiErrorMessage } from '@/lib/api';
 
+// Only allow http/https hrefs (defense-in-depth against javascript:/data: links).
+function safeHref(link) {
+  try {
+    const u = new URL(link);
+    return u.protocol === 'http:' || u.protocol === 'https:' ? link : '#';
+  } catch {
+    return '#';
+  }
+}
+
 export function InfoSection({ moduleId }) {
   const { user, isSuperAdmin } = useAuth();
   const { data: infos, isLoading } = useModuleInfos(moduleId);
@@ -63,7 +73,7 @@ export function InfoSection({ moduleId }) {
                     <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{info.description}</p>
                   )}
                   <a
-                    href={info.link}
+                    href={safeHref(info.link)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-xs text-brand-600 hover:underline dark:text-brand-300"
@@ -79,7 +89,7 @@ export function InfoSection({ moduleId }) {
 
                 <div className="flex shrink-0 items-center gap-1">
                   <a
-                    href={info.link}
+                    href={safeHref(info.link)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 dark:border-line dark:text-slate-300"
