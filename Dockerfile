@@ -10,8 +10,9 @@ ENV NODE_ENV=development
 ARG VITE_TURNSTILE_SITE_KEY
 ENV VITE_TURNSTILE_SITE_KEY=${VITE_TURNSTILE_SITE_KEY}
 WORKDIR /app/frontend
-# Copy manifests first for better layer caching.
-COPY frontend/package*.json ./
+# Copy manifests first for better layer caching. .npmrc pins peer-dependency
+# resolution so `npm ci` here matches how package-lock.json was generated.
+COPY frontend/package*.json frontend/.npmrc ./
 # Cache npm downloads across builds so packages aren't re-fetched every time.
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev
 COPY frontend/ ./
@@ -23,7 +24,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Install production dependencies only (cached unless package files change).
-COPY backend/package*.json ./
+# .npmrc pins peer-dependency resolution to match package-lock.json.
+COPY backend/package*.json backend/.npmrc ./
 RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 # Application source.
