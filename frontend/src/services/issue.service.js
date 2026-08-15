@@ -5,6 +5,10 @@ export const issueService = {
     const { data } = await api.get('/issues', { params: { module_id: moduleId } });
     return data.data;
   },
+  async listMine(userId) {
+    const { data } = await api.get('/issues', { params: { assignee_id: userId } });
+    return data.data;
+  },
   async create(payload) {
     const { data } = await api.post('/issues', payload);
     return data.data;

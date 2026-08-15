@@ -10,6 +10,7 @@ const ModulesPage = lazy(() => import('@/pages/ModulesPage'));
 const ModuleDetailPage = lazy(() => import('@/pages/ModuleDetailPage'));
 const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
 const TasksPage = lazy(() => import('@/pages/TasksPage'));
+const IssuesPage = lazy(() => import('@/pages/IssuesPage'));
 const UsersPage = lazy(() => import('@/pages/UsersPage'));
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/modules/:id" element={<ModuleDetailPage />} />
           <Route path="/activities" element={<ActivitiesPage />} />
           <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/issues" element={<IssuesPage />} />
           <Route
             path="/users"
             element={

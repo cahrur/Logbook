@@ -1,12 +1,17 @@
 const issueRepo = require('../repositories/issue.repository');
 const moduleRepo = require('../repositories/module.repository');
-const { NotFoundError } = require('../utils/errors');
+const { NotFoundError, ValidationError } = require('../utils/errors');
 
 const issueService = {
-  async listByModule(moduleId) {
-    const found = await moduleRepo.findById(moduleId);
-    if (!found) throw new NotFoundError('Modul tidak ditemukan');
-    return issueRepo.listByModule(moduleId);
+  async list(filters) {
+    if (!filters.moduleId && !filters.assigneeId) {
+      throw new ValidationError('module_id atau assignee_id wajib diisi');
+    }
+    if (filters.moduleId) {
+      const found = await moduleRepo.findById(filters.moduleId);
+      if (!found) throw new NotFoundError('Modul tidak ditemukan');
+    }
+    return issueRepo.list(filters);
   },
 
   async getById(id) {

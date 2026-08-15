@@ -41,8 +41,8 @@ export function IssueFormModal({ open, onClose, moduleId, issue }) {
   const [pending, setPending] = useState([]); // images to upload after save
   const [error, setError] = useState('');
   const inputRef = useRef(null);
-  const createMut = useCreateIssue(moduleId);
-  const updateMut = useUpdateIssue(moduleId);
+  const createMut = useCreateIssue();
+  const updateMut = useUpdateIssue();
 
   useEffect(() => {
     if (open) {

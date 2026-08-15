@@ -20,8 +20,8 @@ function sortIssues(issues) {
 const SELECT_CLASS =
   'rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 focus:border-brand-500 focus:outline-none dark:border-line dark:bg-secondary dark:text-slate-200';
 
-function IssueRow({ issue, moduleId, canWrite, canDelete, onView, onEdit, onDelete }) {
-  const updateMut = useUpdateIssue(moduleId);
+function IssueRow({ issue, canWrite, canDelete, onView, onEdit, onDelete }) {
+  const updateMut = useUpdateIssue();
   const prio = ISSUE_PRIORITY[issue.priority] || ISSUE_PRIORITY.medium;
   const closed = issue.status === 'resolved' || issue.status === 'closed';
   const overdue = overdueDays(issue.deadline, closed);
@@ -85,7 +85,7 @@ function IssueRow({ issue, moduleId, canWrite, canDelete, onView, onEdit, onDele
 
 export function IssueSection({ moduleId, canWrite, canDelete }) {
   const { data: issues, isLoading } = useModuleIssues(moduleId);
-  const deleteMut = useDeleteIssue(moduleId);
+  const deleteMut = useDeleteIssue();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
@@ -133,7 +133,6 @@ export function IssueSection({ moduleId, canWrite, canDelete }) {
             <IssueRow
               key={issue.id}
               issue={issue}
-              moduleId={moduleId}
               canWrite={canWrite}
               canDelete={canDelete}
               onView={setViewing}

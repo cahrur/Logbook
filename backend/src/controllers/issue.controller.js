@@ -3,7 +3,10 @@ const { ok, created, asyncHandler } = require('../utils/response');
 
 module.exports = {
   list: asyncHandler(async (req, res) => {
-    const data = await issueService.listByModule(req.validated.module_id);
+    const data = await issueService.list({
+      moduleId: req.validated.module_id,
+      assigneeId: req.validated.assignee_id,
+    });
     return ok(res, data, 'Daftar issue');
   }),
 

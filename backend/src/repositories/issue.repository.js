@@ -20,12 +20,17 @@ function baseQuery() {
   return knex(`${TABLE} as i`)
     .leftJoin('users as a', 'i.assignee_id', 'a.id')
     .leftJoin('users as c', 'i.created_by', 'c.id')
-    .select(...COLUMNS, 'a.name as assignee_name', 'c.name as creator_name');
+    .leftJoin('modules as m', 'i.module_id', 'm.id')
+    .select(...COLUMNS, 'a.name as assignee_name', 'c.name as creator_name', 'm.name as module_name');
 }
 
 module.exports = {
-  listByModule(moduleId) {
-    return baseQuery().where('i.module_id', moduleId).orderBy('i.id', 'desc');
+  // filters: { moduleId, assigneeId }
+  list(filters = {}) {
+    const q = baseQuery();
+    if (filters.moduleId) q.where('i.module_id', filters.moduleId);
+    if (filters.assigneeId) q.where('i.assignee_id', filters.assigneeId);
+    return q.orderBy('i.id', 'desc');
   },
 
   findById(id) {

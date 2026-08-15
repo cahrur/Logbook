@@ -25,7 +25,8 @@ const dashboardService = {
       activityRepo.countBetween(from, to, 'blocked'),
     ]);
 
-    const recentActivities = await activityRepo.list({ limit: 8 });
+    // Dashboard shows a short preview only — "Lihat semua" links to /activities.
+    const recentActivities = await activityRepo.list({ limit: 5 });
 
     const stats = {
       total_modules: modules.length,

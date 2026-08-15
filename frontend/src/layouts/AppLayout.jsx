@@ -5,6 +5,7 @@ import {
   Boxes,
   ListChecks,
   ClipboardList,
+  Bug,
   Users,
   LogOut,
   AlignLeft,
@@ -21,6 +22,7 @@ const NAV = [
   { to: '/modules', label: 'Modul', icon: Boxes },
   { to: '/activities', label: 'Aktivitas', icon: ListChecks },
   { to: '/tasks', label: 'Tugas', icon: ClipboardList },
+  { to: '/issues', label: 'Issue', icon: Bug },
   { to: '/users', label: 'Tim', icon: Users, adminOnly: true },
 ];
 

@@ -29,7 +29,8 @@ const updateIssueSchema = z
   .refine((data) => Object.keys(data).length > 0, { message: 'Tidak ada field yang diubah' });
 
 const listIssueQuerySchema = z.object({
-  module_id: z.coerce.number().int().positive(),
+  module_id: z.coerce.number().int().positive().optional(),
+  assignee_id: z.coerce.number().int().positive().optional(),
 });
 
 module.exports = { createIssueSchema, updateIssueSchema, listIssueQuerySchema };
