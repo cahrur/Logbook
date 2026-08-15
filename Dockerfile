@@ -2,9 +2,12 @@
 
 # ---- Stage 1: build the frontend (Vite) ----
 FROM node:20-alpine AS frontend
-# Force a dev install so build tools (vite) are present even when the platform
-# injects NODE_ENV=production at build time (e.g. Coolify).
-ENV NODE_ENV=development
+# Must stay "production": Vite bakes NODE_ENV into the bundle, so building with
+# "development" ships React's dev build — which makes StrictMode run effects
+# twice and fires two concurrent /auth/refresh calls, losing the rotation race.
+# Build tools (vite) are guaranteed by the explicit --include=dev on npm ci below,
+# so this no longer needs to be "development" to keep devDependencies installed.
+ENV NODE_ENV=production
 # Public build-time config baked into the SPA bundle. In Coolify, set this as a
 # BUILD-TIME variable with your real Cloudflare site key (empty → testing key).
 ARG VITE_TURNSTILE_SITE_KEY
